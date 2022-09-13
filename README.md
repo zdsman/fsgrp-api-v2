@@ -1,4 +1,16 @@
 # fsetgrp-api
+FSET Groups (Groups) are a convenient way to associate user to a resources within the context of a group or team of individuals working on a project or projects within the FamilySearch umberalla.
+
+Groups can be created by anyone and the creator is the original owner of the group. There is only one group owner but ownership can be transfered to another individual. Only the group owner can delete the group and ownership doesn't imply any other permissions to manage the group.
+
+Group administration permissions is given by assignment and there may be multiple group administrators.
+
+Groups do NOT represent or store permissions granted to any user. However, groups do allow members to request permissions using the assignments defined in the group. Requested assignments are not stored or managed as part of the group.
+
+Adding users to a group does not imply permissions. A user can be a member of one or more groups without any assignments. The user may request any assignment of any group they are a member of.
+
+Groups have an association to one or more resources. This association completes the resource-assignment-action paradigm that enables permission configuration in our IDP.
+
 ## Authentication and Authorization
 ### Authorization Header
 ```
@@ -578,7 +590,7 @@ Both of the following assignments are required:
 
 
 ### Add User to a Group
-Add a user to a group and provision one or more assignments. The user may already be part of the group in which case only assignmens will provisioned. Assignment provisioning is idempotent and will be regenerated.
+Add a user to a group and request the provisioning of one or more assignments for the user. The user may already be part of the group in which case only assignmens will provisioned. Assignment provisioning is idempotent and will be regenerated.
 
 The assignment provisioning is asyncrounous and may be denied. In this case, the API return successfully without any indication of the provisioning process.
 
@@ -607,3 +619,33 @@ No Details returned
 - `fset:grp:assignment:*:fset-group-admin:*:o-*:*` 
 - `fset:grp:assignment:*:fset-group-admin:*:g-<groupId>:*` 
 
+### Request Assignment in a Group
+Request on or more assignments be provisioned for a user. If the caller is a member of the group, the user can request an assignment be provisioned without specific permissions.
+If the caller is not a member of the group the caller must have an enabling assignment.
+
+The assignment provisioning is asyncrounous and may be denied. In this case, the API return successfully without any indication of the provisioning process.
+
+An error will be returned under the following conditions:
+1. Invalid group specified
+2. Invalid user specified
+3. One or more specified assignments are not present in the group
+
+```
+request_assignment(GroupFri='string', UserFri='string', Assignments=['string'])
+```
+#### Parameters
+- **GroupFri** - FRI of the group to which the user will be added
+- **UserFri** - FRI of the user being added
+- **Assignments** - List of individual assignment FRIs.
+
+#### Response
+```
+{}
+```
+#### Details
+No Details returned
+
+#### Enabling Assignments
+These are required when the caller is different than the user specified in the API
+- `fset:grp:assignment:*:fset-group-admin:*:o-*:*` 
+- `fset:grp:assignment:*:fset-group-admin:*:g-<groupId>:*` 
